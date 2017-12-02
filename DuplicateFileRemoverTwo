@@ -1,0 +1,101 @@
+//PROGRAMMED BY BADDE LIYANAGE DON DILANGA, bld@nucuta.com, 2017/12/02
+
+import java.io.File;
+import java.util.HashMap;
+import java.security.MessageDigest;
+import java.util.Base64.Encoder;
+import java.util.Base64;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.util.Scanner;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class DuplicateFileRemoverTwo {
+	
+	public static HashMap<String, String> hashmap = new HashMap<String, String>();
+	public static HashMap<String, String> dupHashMap = new HashMap<String, String>();
+	int dupNum = 0;
+	int regNum = 0;
+	static int dupCount = 0;
+	
+	public static void dupScan(String folderToScan){
+		try
+		{
+			File dir = new File(folderToScan);
+			File[] fileList = dir.listFiles();
+			for(File oneFile : fileList){
+				if(oneFile.isFile())
+				{
+					MessageDigest md = MessageDigest.getInstance("MD5");
+					byte[] fileBytes = Files.readAllBytes(oneFile.toPath());
+					String fileString = Base64.getEncoder().encodeToString(md.digest(fileBytes));
+					
+					if(hashmap.containsKey(fileString))
+					{ 
+						String original = hashmap.get(fileString);
+						String duplicate = oneFile.getAbsolutePath();
+						System.out.println("Duplicate File : " + duplicate);
+						dupHashMap.put(Integer.toString(dupCount++),duplicate);
+					}
+					else
+					{
+						hashmap.put(fileString, oneFile.getAbsolutePath());
+						System.out.println("Unique File : " + oneFile.toPath());
+					}
+				}else if(oneFile.isDirectory())
+				{
+					dupScan(oneFile.getAbsolutePath());
+				}
+			}
+		}
+		catch (Exception x)
+		{
+			System.out.println("Error Message : "  + x.getMessage());
+		}
+	}
+	
+	public static void delDuplicates(boolean state)
+	{
+		if(state == true)
+		{
+			try
+			{
+				for(String dupHashName : dupHashMap.keySet())
+				{
+					Path pathOfFile = Paths.get(dupHashMap.get(dupHashName));
+					String dupFileName = dupHashMap.get(dupHashName);
+					Files.delete(pathOfFile);
+					System.out.println("File '" + dupFileName + "' Is Deleted");
+				}
+			}
+			catch(Exception x)
+			{
+				System.out.println("Error Message : "  + x.getMessage());
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scn = new Scanner(System.in);
+		
+		System.out.println("Type The Folder Path To Scan For Duplicate Files");
+		String input = scn.nextLine();
+		dupScan(input);
+		
+		if(dupHashMap.isEmpty() == true)System.out.println("No Duplicate File Is Found");
+		
+		System.out.println("-------------------------------------------");
+		System.out.println("Number of Regular Files : " + hashmap.size());
+		System.out.println("Number of Duplicate Files : " + dupHashMap.size());
+		
+		System.out.println("Do You Want to Delete The Duplicate Files?... Press Any Key To Proceed");
+		input = scn.nextLine();
+		delDuplicates(true);
+		
+		System.out.println("-------------------------------------------");
+		System.out.println("Operation Is Successful");
+	}
+}
+
+
