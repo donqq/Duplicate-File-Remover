@@ -1,4 +1,4 @@
-//PROGRAMMED BY BADDE LIYANAGE DON DILANGA, bld@nucuta.com, 2017/12/02. Copyright © 2017 BADDE LIYANAGE DON DILANGA
+//PROGRAMMED BY BADDE LIYANAGE DON DILANGA, bld@nucuta.com, 2017/12/03. Copyright © 2017 BADDE LIYANAGE DON DILANGA
 
 import java.io.File;
 import java.util.HashMap;
@@ -61,13 +61,17 @@ public class DuplicateFileRemoverTwo {
 		{
 			try
 			{
+				int numOfDelFiles = 0;
 				for(String dupHashName : dupHashMap.keySet())
 				{
 					Path pathOfFile = Paths.get(dupHashMap.get(dupHashName));
 					String dupFileName = dupHashMap.get(dupHashName);
 					Files.delete(pathOfFile);
 					System.out.println("File '" + dupFileName + "' Is Deleted");
+					numOfDelFiles++;
 				}
+				System.out.println("-------------------------------------------");
+				System.out.println(numOfDelFiles + " of Duplicate Files Are Deleted");
 			}
 			catch(Exception x)
 			{
@@ -86,16 +90,27 @@ public class DuplicateFileRemoverTwo {
 		if(dupHashMap.isEmpty() == true)System.out.println("No Duplicate File Is Found");
 		
 		System.out.println("-------------------------------------------");
-		System.out.println("Number of Regular Files : " + hashmap.size());
+		System.out.println("Number of Unique Files : " + hashmap.size());
 		System.out.println("Number of Duplicate Files : " + dupHashMap.size());
-		
-		System.out.println("Do You Want to Delete The Duplicate Files?... Press Any Key To Proceed");
-		input = scn.nextLine();
-		delDuplicates(true);
-		
 		System.out.println("-------------------------------------------");
-		System.out.println("Operation Is Successful");
+		
+		System.out.println("Do You Want to Delete The Duplicate Files? Press y to YES, Press n to NO");
+		input = scn.nextLine();
+		while(!"y".equals(input) && !"n".equals(input)){
+			System.out.println("Do You Want to Delete The Duplicate Files? Press y to YES, Press n to NO");
+			input = scn.nextLine();
+		}
+		
+		if("y".equals(input))
+		{
+			delDuplicates(true);
+			System.out.println("-------------------------------------------");
+			System.out.println("Operation Is Successful");
+		}else if("n".equals(input)){
+			System.out.println("Operation Is Cancelled");
+		}
+		
+		System.exit(0);
+		
 	}
 }
-
-
