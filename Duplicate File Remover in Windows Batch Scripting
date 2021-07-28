@@ -1,0 +1,32 @@
+@echo off
+REM PROGRAMMED BY BADDE LIYANAGE DON DILANGA, bld@nucuta.com, 2021/07/28. Copyright © 2021 BADDE LIYANAGE DON DILANGA
+
+setlocal enabledelayedexpansion
+echo(
+echo "This program removes duplicate files in the current directory."
+echo "Warning: Take a backup of the current directory to avoid accidents"
+PAUSE
+echo(
+set path=%cd%
+set /A count=0
+
+for %%a in (*.*) do (
+	for %%b in (*.*) do (
+		if exist "%%b" if %%a neq %%b (
+			if "%%~Ta %%~Za" equ "%%~Tb %%~Zb" (
+				echo "%%a File is deleted"
+				set /A count+=1
+				del "%%a"
+			)
+		)
+	)
+)
+
+echo(
+echo "---------"
+echo "!count! Duplicate Files were deleted in the current directory"
+echo "---------"
+echo(
+
+endlocal
+PAUSE
